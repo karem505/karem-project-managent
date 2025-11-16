@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Nature-inspired Material Design color palette */
+    /* Background - Soft warm white */
+    --background: 40 20% 97%;
+    --foreground: 210 24% 16%;
+
+    /* Cards - Pure white with elevation */
+    --card: 0 0% 100%;
+    --card-foreground: 210 24% 16%;
+
+    /* Primary - Calming sage green */
+    --primary: 140 35% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Earthy terracotta */
+    --secondary: 25 60% 65%;
+    --secondary-foreground: 210 24% 16%;
+
+    /* Accent - Soft sky blue */
+    --accent: 200 70% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Success - Fresh green */
+    --success: 145 60% 50%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning - Warm amber */
+    --warning: 40 90% 60%;
+    --warning-foreground: 210 24% 16%;
+
+    /* Destructive - Soft coral red */
+    --destructive: 355 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Muted - Soft sage tint */
+    --muted: 140 20% 94%;
+    --muted-foreground: 210 12% 45%;
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 24% 16%;
+
+    /* Border - Subtle earth tone */
+    --border: 140 15% 88%;
+    --input: 140 15% 88%;
+    --ring: 140 35% 45%;
+
+    /* Radius - More rounded for Material Design */
+    --radius: 0.75rem;
+
+    /* Material Design Elevation Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 2px 8px -2px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 8px 16px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.06);
+    --shadow-xl: 0 16px 32px -8px rgba(0, 0, 0, 0.12), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  /* Material Design Elevation Classes */
+  .elevation-1 {
+    box-shadow: var(--shadow-sm);
+  }
+  .elevation-2 {
+    box-shadow: var(--shadow-md);
+  }
+  .elevation-3 {
+    box-shadow: var(--shadow-lg);
+  }
+  .elevation-4 {
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* Smooth transitions for Material Design */
+  .transition-elevation {
+    transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Ripple effect base (will enhance with JavaScript later) */
+  .ripple-container {
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+/* Custom scrollbar - Nature-inspired */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+  opacity: 0.3;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-300 rounded-lg;
+  opacity: 0.6;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-400;
+  opacity: 0.8;
+}
