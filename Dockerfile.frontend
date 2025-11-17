@@ -1,0 +1,25 @@
+# Frontend Dockerfile for Railway deployment
+# Builds from project root, uses frontend directory
+
+FROM node:20-alpine AS base
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files from frontend directory
+COPY frontend/package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy frontend source code
+COPY frontend/ ./
+
+# Build Next.js application
+RUN npm run build
+
+# Expose port (Railway will override with $PORT)
+EXPOSE 3000
+
+# Start Next.js production server
+CMD ["npm", "run", "start"]
