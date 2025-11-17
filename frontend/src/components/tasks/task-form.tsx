@@ -8,6 +8,7 @@ import type { Task } from '@/types';
 import { Modal, ModalFooter } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { SelectField as Select } from '@/components/ui/select-field';
 import { DependencyManager } from '@/components/dependencies/dependency-manager';
 import { useTaskStore } from '@/lib/store/task-store';
@@ -157,16 +158,19 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={task ? 'Edit Task' : 'Create Task'} size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label="Task Title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          error={errors.title}
-          required
-          disabled={isLoading}
-          placeholder="Enter task title..."
-        />
+        <div>
+          <Label htmlFor="title">Task Title</Label>
+          <Input
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+            disabled={isLoading}
+            placeholder="Enter task title..."
+          />
+          {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title}</p>}
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -215,59 +219,74 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         </div>
 
         <div className="grid grid-cols-3 gap-4">
-          <Input
-            label="Start Date"
-            name="start_date"
-            type="date"
-            value={formData.start_date}
-            onChange={handleChange}
-            error={errors.start_date}
-            required
-            disabled={isLoading}
-          />
+          <div>
+            <Label htmlFor="start_date">Start Date</Label>
+            <Input
+              id="start_date"
+              name="start_date"
+              type="date"
+              value={formData.start_date}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+            />
+            {errors.start_date && <p className="text-sm text-red-600 mt-1">{errors.start_date}</p>}
+          </div>
 
-          <Input
-            label="End Date"
-            name="end_date"
-            type="date"
-            value={formData.end_date}
-            onChange={handleChange}
-            error={errors.end_date}
-            required
-            disabled={isLoading}
-          />
+          <div>
+            <Label htmlFor="end_date">End Date</Label>
+            <Input
+              id="end_date"
+              name="end_date"
+              type="date"
+              value={formData.end_date}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+            />
+            {errors.end_date && <p className="text-sm text-red-600 mt-1">{errors.end_date}</p>}
+          </div>
 
-          <Input
-            label="Duration (days)"
-            name="duration"
-            type="number"
-            value={formData.duration}
-            onChange={handleChange}
-            disabled={isLoading}
-            helperText="Auto-calculated"
-          />
+          <div>
+            <Label htmlFor="duration">Duration (days)</Label>
+            <Input
+              id="duration"
+              name="duration"
+              type="number"
+              value={formData.duration}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+            <p className="text-sm text-gray-500 mt-1">Auto-calculated</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Input
-            label="Estimated Hours"
-            name="estimated_hours"
-            type="number"
-            step="0.5"
-            value={formData.estimated_hours}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
+          <div>
+            <Label htmlFor="estimated_hours">Estimated Hours</Label>
+            <Input
+              id="estimated_hours"
+              name="estimated_hours"
+              type="number"
+              step="0.5"
+              value={formData.estimated_hours}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
 
-          <Input
-            label="Estimated Cost"
-            name="estimated_cost"
-            type="number"
-            step="0.01"
-            value={formData.estimated_cost}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
+          <div>
+            <Label htmlFor="estimated_cost">Estimated Cost</Label>
+            <Input
+              id="estimated_cost"
+              name="estimated_cost"
+              type="number"
+              step="0.01"
+              value={formData.estimated_cost}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
         {/* Task Dependencies */}
