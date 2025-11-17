@@ -72,13 +72,26 @@ npm run dev
 
 ## Deployment
 
-### Railway
+### Railway (Recommended for Production)
 
-Deploy to Railway with one click or follow the detailed guide:
+Deploy to Railway with full environment variable setup:
 
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new)
 
-📖 See [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md) for detailed deployment instructions.
+**Quick Setup:**
+```bash
+# Run the setup script to generate environment variables
+./railway-setup.sh
+```
+
+📖 **Documentation:**
+- [RAILWAY_SETUP.md](./RAILWAY_SETUP.md) - Complete step-by-step deployment guide with all environment variables
+- [RAILWAY_CHECKLIST.md](./RAILWAY_CHECKLIST.md) - Quick reference checklist
+- [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md) - Overview and additional details
+
+**Environment Templates:**
+- Backend: [.env.railway](./.env.railway)
+- Frontend: [.env.railway.frontend](./.env.railway.frontend)
 
 ### Docker Production
 
@@ -89,7 +102,10 @@ docker-compose -f docker-compose.yml up -d
 ## Documentation
 
 - [Getting Started Guide](./GETTING_STARTED.md)
-- [Railway Deployment](./RAILWAY_DEPLOYMENT.md)
+- **Railway Deployment:**
+  - [RAILWAY_SETUP.md](./RAILWAY_SETUP.md) - Complete deployment guide with environment variables
+  - [RAILWAY_CHECKLIST.md](./RAILWAY_CHECKLIST.md) - Quick reference checklist
+  - [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md) - Overview
 - [Docker Setup](./DOCKER_README.md)
 - [Testing Guide](./TESTING_GUIDE.md)
 - [Project Summary](./PROJECT_SUMMARY.md)
