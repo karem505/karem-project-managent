@@ -12,10 +12,20 @@ COPY frontend/package*.json ./
 # Install dependencies
 RUN npm ci
 
+# Copy all frontend configuration files
+COPY frontend/tsconfig.json ./
+COPY frontend/next.config.js ./
+COPY frontend/postcss.config.js ./
+COPY frontend/tailwind.config.js ./
+COPY frontend/components.json ./
+COPY frontend/next-env.d.ts ./
+
 # Copy frontend source code
-COPY frontend/ ./
+COPY frontend/src ./src
+COPY frontend/public ./public
 
 # Build Next.js application
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Expose port (Railway will override with $PORT)
