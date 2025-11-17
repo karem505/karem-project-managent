@@ -41,6 +41,7 @@ staticfiles/
 .env.*.local
 backend/.env
 frontend/.env.local
+.secret_key.txt
 
 # IDE
 .vscode/

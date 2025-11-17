@@ -1,0 +1,35 @@
+# Root-level requirements for Railway deployment
+# This file helps Railway auto-detect the project as a Python application
+
+# Core Django and DRF
+Django==5.0.1
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+django-filter==23.5
+drf-spectacular==0.27.0
+
+# Database
+psycopg2-binary==2.9.9
+
+# Configuration
+python-decouple==3.8
+
+# Data processing
+pandas==2.1.4
+
+# Async tasks
+celery==5.3.4
+redis==5.0.1
+
+# Production server
+gunicorn==21.2.0
+
+# Static files
+whitenoise==6.6.0
+
+# Images
+Pillow==10.1.0
+
+# Development utilities
+django-extensions==3.2.3
