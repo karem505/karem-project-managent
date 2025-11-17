@@ -1,15 +1,25 @@
+# Nixpacks configuration for Railway deployment
+# This configures the build and deployment process for the backend Django application
+
 [phases.setup]
+# Install required system packages
 nixPkgs = ["python311", "python311Packages.pip", "postgresql"]
 
 [phases.install]
+# Install Python dependencies from backend requirements
 cmds = [
+    "pip install --upgrade pip",
     "pip install -r backend/requirements/base.txt"
 ]
 
 [phases.build]
+# Collect static files for Django
 cmds = [
     "cd backend && python manage.py collectstatic --noinput"
 ]
 
 [start]
+# Start the Django application with Gunicorn
+# Workers: 3 (adjust based on Railway plan)
+# Timeout: 60 seconds for long-running requests
 cmd = "cd backend && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3 --timeout 60"
