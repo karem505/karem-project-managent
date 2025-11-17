@@ -5,9 +5,25 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+
+def health_check(request):
+    """Simple health check endpoint"""
+    return JsonResponse({
+        'status': 'healthy',
+        'message': 'Project Management API is running',
+        'endpoints': {
+            'admin': '/admin/',
+            'api_docs': '/api/docs/',
+            'api_v1': '/api/v1/',
+        }
+    })
+
+
 urlpatterns = [
+    path('', health_check, name='health'),
     path('admin/', admin.site.urls),
 
     # API Documentation
