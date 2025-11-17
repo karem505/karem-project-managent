@@ -3,26 +3,17 @@
 
 FROM node:20-alpine AS base
 
-# Set working directory
-WORKDIR /app
+# Set working directory to the project root first
+WORKDIR /project
 
-# Copy package files from frontend directory
-COPY frontend/package*.json ./
+# Copy the entire frontend directory
+COPY frontend ./frontend
+
+# Change to frontend directory
+WORKDIR /project/frontend
 
 # Install dependencies
 RUN npm ci
-
-# Copy all frontend configuration files
-COPY frontend/tsconfig.json ./
-COPY frontend/next.config.js ./
-COPY frontend/postcss.config.js ./
-COPY frontend/tailwind.config.js ./
-COPY frontend/components.json ./
-COPY frontend/next-env.d.ts ./
-
-# Copy frontend source code
-COPY frontend/src ./src
-COPY frontend/public ./public
 
 # Build Next.js application
 ENV NEXT_TELEMETRY_DISABLED=1
