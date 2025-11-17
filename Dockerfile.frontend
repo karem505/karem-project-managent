@@ -1,19 +1,19 @@
 # Frontend Dockerfile for Railway deployment
 # Builds from project root, uses frontend directory
 
-FROM node:20-alpine AS base
+FROM node:20-alpine
 
-# Set working directory to the project root first
-WORKDIR /project
+# Set working directory
+WORKDIR /app
 
-# Copy the entire frontend directory
-COPY frontend ./frontend
-
-# Change to frontend directory
-WORKDIR /project/frontend
+# Copy package files first for better caching
+COPY frontend/package.json frontend/package-lock.json ./
 
 # Install dependencies
 RUN npm ci
+
+# Copy all frontend source files
+COPY frontend/ ./
 
 # Build Next.js application
 ENV NEXT_TELEMETRY_DISABLED=1
