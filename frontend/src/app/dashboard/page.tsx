@@ -297,7 +297,7 @@ export default function DashboardPage() {
                         {formatRelativeTime(project.created_at)}
                       </p>
                     </div>
-                    <Badge variant="secondary" className={getStatusColor(project.status)}>
+                    <Badge className={getStatusColor(project.status)}>
                       {project.status}
                     </Badge>
                   </Link>
@@ -339,7 +339,7 @@ export default function DashboardPage() {
                         {task.project} • {formatRelativeTime(task.created_at)}
                       </p>
                     </div>
-                    <Badge variant="secondary" className={getStatusColor(task.status)}>
+                    <Badge className={getStatusColor(task.status)}>
                       {task.status}
                     </Badge>
                   </div>

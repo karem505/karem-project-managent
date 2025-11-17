@@ -5,7 +5,7 @@
 
 import type { Task } from '@/types';
 import { Badge } from '@/components/ui/badge';
-import { getStatusColor, getPriorityIcon, formatDate } from '@/lib/utils';
+import { getStatusColor, getPriorityColor, getPriorityIcon, formatDate } from '@/lib/utils';
 import { Calendar, Clock, MoreVertical } from 'lucide-react';
 import { useState } from 'react';
 
@@ -83,12 +83,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onCl
       )}
 
       <div className="flex items-center gap-2 mb-3">
-        <Badge className={getStatusColor(task.priority)} variant="default">
+        <Badge className={getPriorityColor(task.priority)} variant="default">
           {getPriorityIcon(task.priority)} {task.priority}
         </Badge>
 
         {task.is_critical && (
-          <Badge variant="danger" className="text-xs">
+          <Badge variant="default" className="text-xs bg-red-600 text-white">
             Critical Path
           </Badge>
         )}

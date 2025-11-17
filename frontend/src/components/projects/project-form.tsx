@@ -8,6 +8,7 @@ import type { Project } from '@/types';
 import { Modal, ModalFooter } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { SelectField as Select } from '@/components/ui/select-field';
 import { useClientStore } from '@/lib/store/client-store';
 
@@ -131,15 +132,18 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={project ? 'Edit Project' : 'Create Project'} size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label="Project Name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          error={errors.name}
-          required
-          disabled={isLoading}
-        />
+        <div>
+          <Label htmlFor="name">Project Name</Label>
+          <Input
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            disabled={isLoading}
+          />
+          {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -163,40 +167,49 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
         />
 
         <div className="grid grid-cols-2 gap-4">
-          <Input
-            label="Start Date"
-            name="start_date"
-            type="date"
-            value={formData.start_date}
-            onChange={handleChange}
-            error={errors.start_date}
-            required
-            disabled={isLoading}
-          />
+          <div>
+            <Label htmlFor="start_date">Start Date</Label>
+            <Input
+              id="start_date"
+              name="start_date"
+              type="date"
+              value={formData.start_date}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+            />
+            {errors.start_date && <p className="text-sm text-red-600 mt-1">{errors.start_date}</p>}
+          </div>
 
-          <Input
-            label="End Date"
-            name="end_date"
-            type="date"
-            value={formData.end_date}
-            onChange={handleChange}
-            error={errors.end_date}
-            required
-            disabled={isLoading}
-          />
+          <div>
+            <Label htmlFor="end_date">End Date</Label>
+            <Input
+              id="end_date"
+              name="end_date"
+              type="date"
+              value={formData.end_date}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+            />
+            {errors.end_date && <p className="text-sm text-red-600 mt-1">{errors.end_date}</p>}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Input
-            label="Budget"
-            name="budget"
-            type="number"
-            step="0.01"
-            value={formData.budget}
-            onChange={handleChange}
-            error={errors.budget}
-            disabled={isLoading}
-          />
+          <div>
+            <Label htmlFor="budget">Budget</Label>
+            <Input
+              id="budget"
+              name="budget"
+              type="number"
+              step="0.01"
+              value={formData.budget}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+            {errors.budget && <p className="text-sm text-red-600 mt-1">{errors.budget}</p>}
+          </div>
 
           <Select
             label="Status"

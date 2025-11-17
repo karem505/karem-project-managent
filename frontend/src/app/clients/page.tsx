@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useClientStore } from '@/lib/store/client-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Modal, ModalFooter } from '@/components/ui/modal';
@@ -185,38 +186,53 @@ export default function ClientsPage() {
             </div>
           )}
 
-          <Input
-            label="Client Name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            required
-          />
+          <div>
+            <Label htmlFor="name">Client Name</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+            />
+          </div>
 
-          <Input
-            label="Email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            required
-          />
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+            />
+          </div>
 
-          <Input
-            label="Phone"
-            value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          />
+          <div>
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              id="phone"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            />
+          </div>
 
-          <Input
-            label="Company"
-            value={formData.company}
-            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-          />
+          <div>
+            <Label htmlFor="company">Company</Label>
+            <Input
+              id="company"
+              value={formData.company}
+              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+            />
+          </div>
 
-          <Input
-            label="Contact Person"
-            value={formData.contact_person}
-            onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
-          />
+          <div>
+            <Label htmlFor="contact_person">Contact Person</Label>
+            <Input
+              id="contact_person"
+              value={formData.contact_person}
+              onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
+            />
+          </div>
 
           <ModalFooter>
             <Button type="button" variant="outline" onClick={() => setShowForm(false)}>

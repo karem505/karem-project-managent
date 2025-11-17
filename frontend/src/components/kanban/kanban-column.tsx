@@ -44,7 +44,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-sm">{title}</h3>
-            <Badge variant="secondary" className={badgeColor}>
+            <Badge className={badgeColor}>
               {tasks.length}
             </Badge>
           </div>

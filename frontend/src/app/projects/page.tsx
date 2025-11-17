@@ -227,7 +227,7 @@ export default function ProjectsPage() {
                 Cancel
               </Button>
               <Button
-                variant="danger"
+                variant="destructive"
                 onClick={() => handleDeleteProject(showDeleteConfirm)}
                 isLoading={isLoading}
               >

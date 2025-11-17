@@ -230,6 +230,8 @@ export interface DashboardData {
     total: number;
     active: number;
     completed: number;
+    planning: number;
+    on_hold: number;
   };
   tasks: {
     total: number;

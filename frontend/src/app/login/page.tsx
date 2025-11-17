@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function LoginPage() {
@@ -51,25 +52,31 @@ export default function LoginPage() {
               </div>
             )}
 
-            <Input
-              label="Username or Email"
-              name="username"
-              type="text"
-              required
-              value={formData.username}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
+            <div>
+              <Label htmlFor="username">Username or Email</Label>
+              <Input
+                id="username"
+                name="username"
+                type="text"
+                required
+                value={formData.username}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
+            </div>
 
-            <Input
-              label="Password"
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
+            </div>
 
             <Button type="submit" className="w-full" isLoading={isLoading}>
               Sign In

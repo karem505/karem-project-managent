@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function RegisterPage() {
@@ -71,67 +72,85 @@ export default function RegisterPage() {
             )}
 
             <div className="grid grid-cols-2 gap-4">
-              <Input
-                label="First Name"
-                name="first_name"
-                type="text"
-                required
-                value={formData.first_name}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
+              <div>
+                <Label htmlFor="first_name">First Name</Label>
+                <Input
+                  id="first_name"
+                  name="first_name"
+                  type="text"
+                  required
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                />
+              </div>
 
+              <div>
+                <Label htmlFor="last_name">Last Name</Label>
+                <Input
+                  id="last_name"
+                  name="last_name"
+                  type="text"
+                  required
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="username">Username</Label>
               <Input
-                label="Last Name"
-                name="last_name"
+                id="username"
+                name="username"
                 type="text"
                 required
-                value={formData.last_name}
+                value={formData.username}
                 onChange={handleChange}
                 disabled={isLoading}
               />
             </div>
 
-            <Input
-              label="Username"
-              name="username"
-              type="text"
-              required
-              value={formData.username}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
+            </div>
 
-            <Input
-              label="Email"
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
+              <p className="text-sm text-gray-500 mt-1">Minimum 8 characters</p>
+            </div>
 
-            <Input
-              label="Password"
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              disabled={isLoading}
-              helperText="Minimum 8 characters"
-            />
-
-            <Input
-              label="Confirm Password"
-              name="password_confirm"
-              type="password"
-              required
-              value={formData.password_confirm}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
+            <div>
+              <Label htmlFor="password_confirm">Confirm Password</Label>
+              <Input
+                id="password_confirm"
+                name="password_confirm"
+                type="password"
+                required
+                value={formData.password_confirm}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
+            </div>
 
             <Button type="submit" className="w-full" isLoading={isLoading}>
               Create Account
