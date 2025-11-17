@@ -28,8 +28,7 @@ COPY requirements/ requirements/
 FROM base as development
 
 # Install development dependencies
-RUN pip install --upgrade pip && \
-    pip install -r requirements/development.txt
+RUN pip install -r requirements/development.txt
 
 # Copy entrypoint script
 COPY entrypoint.sh /entrypoint.sh
@@ -54,8 +53,7 @@ CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 FROM base as production
 
 # Install production dependencies only
-RUN pip install --upgrade pip && \
-    pip install -r requirements/base.txt
+RUN pip install -r requirements/base.txt
 
 # Copy entrypoint script
 COPY entrypoint.sh /entrypoint.sh
