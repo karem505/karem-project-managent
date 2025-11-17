@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ["class"],
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -14,74 +15,75 @@ module.exports = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
 
-        // Nature-inspired primary palette (Sage Green)
+        // Professional primary palette (Slate Blue)
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
-          50: '#f0f7f4',
-          100: '#dceee5',
-          200: '#baddcc',
-          300: '#8dc5ab',
-          400: '#5ea885',
-          500: '#4a9070', // Main sage green
-          600: '#3a7359',
-          700: '#2f5c48',
-          800: '#28493a',
-          900: '#223d31',
-          950: '#11221b',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b', // Professional slate
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020617',
         },
 
-        // Secondary palette (Earthy Terracotta)
+        // Secondary palette (Neutral Gray)
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
-          50: '#fdf5f3',
-          100: '#fae8e3',
-          200: '#f5d5ca',
-          300: '#edb8a5',
-          400: '#e39279',
-          500: '#d97757', // Terracotta
-          600: '#c65a3c',
-          700: '#a64830',
-          800: '#893d2c',
-          900: '#713629',
-          950: '#3d1912',
+          50: '#f9fafb',
+          100: '#f3f4f6',
+          200: '#e5e7eb',
+          300: '#d1d5db',
+          400: '#9ca3af',
+          500: '#6b7280', // Medium gray
+          600: '#4b5563',
+          700: '#374151',
+          800: '#1f2937',
+          900: '#111827',
+          950: '#030712',
         },
 
-        // Accent palette (Sky Blue)
+        // Accent palette (Professional Blue)
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#b9e6fe',
-          300: '#7cd4fd',
-          400: '#36bffa',
-          500: '#0ba5e9', // Sky blue
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49',
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6', // Professional blue
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+          950: '#172554',
         },
 
-        // Success palette (Fresh Green)
+        // Success palette (Professional Green)
         success: {
           DEFAULT: 'hsl(var(--success))',
           foreground: 'hsl(var(--success-foreground))',
-          50: '#f0fdf5',
-          100: '#dcfce8',
-          200: '#bbf7d1',
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
           300: '#86efac',
           400: '#4ade80',
-          500: '#22c55e', // Fresh green
+          500: '#22c55e', // Professional green
           600: '#16a34a',
           700: '#15803d',
           800: '#166534',
           900: '#14532d',
+          950: '#052e16',
         },
 
-        // Warning palette (Amber)
+        // Warning palette (Professional Amber)
         warning: {
           DEFAULT: 'hsl(var(--warning))',
           foreground: 'hsl(var(--warning-foreground))',
@@ -90,14 +92,15 @@ module.exports = {
           200: '#fde68a',
           300: '#fcd34d',
           400: '#fbbf24',
-          500: '#f59e0b', // Amber
+          500: '#f59e0b', // Professional amber
           600: '#d97706',
           700: '#b45309',
           800: '#92400e',
           900: '#78350f',
+          950: '#451a03',
         },
 
-        // Destructive palette (Coral Red)
+        // Destructive palette (Professional Red)
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
@@ -106,11 +109,12 @@ module.exports = {
           200: '#fecaca',
           300: '#fca5a5',
           400: '#f87171',
-          500: '#ef4444', // Coral red
+          500: '#ef4444', // Professional red
           600: '#dc2626',
           700: '#b91c1c',
           800: '#991b1b',
           900: '#7f1d1d',
+          950: '#450a0a',
         },
 
         muted: {

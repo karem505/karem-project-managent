@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Select } from '@/components/ui/select';
+import { SelectField as Select } from '@/components/ui/select-field';
 import { Input } from '@/components/ui/input';
 import { Plus, Trash2, Link as LinkIcon } from 'lucide-react';
 import { dependenciesAPI } from '@/lib/api/endpoints';

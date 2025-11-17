@@ -1,5 +1,5 @@
 /**
- * Dashboard Page
+ * Dashboard Page - Enhanced with Data Visualization
  */
 'use client';
 
@@ -7,8 +7,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { analyticsAPI } from '@/lib/api/endpoints';
 import type { DashboardData } from '@/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Loading } from '@/components/ui/loading';
 import { formatCurrency, formatRelativeTime, getStatusColor } from '@/lib/utils';
 import {
@@ -18,8 +19,23 @@ import {
   AlertCircle,
   DollarSign,
   TrendingUp,
-  Users,
+  TrendingDown,
+  Activity,
+  Plus,
+  ArrowRight,
 } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+} from 'recharts';
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -52,44 +68,14 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        {error}
+      <div className="rounded-lg border border-destructive bg-destructive/10 p-4 text-destructive">
+        <p className="font-medium">Error loading dashboard</p>
+        <p className="text-sm mt-1">{error}</p>
       </div>
     );
   }
 
   if (!data) return null;
-
-  const stats = [
-    {
-      title: 'Total Projects',
-      value: data.projects.total,
-      icon: FolderKanban,
-      color: 'text-accent-600',
-      bgColor: 'bg-accent-50',
-    },
-    {
-      title: 'Active Projects',
-      value: data.projects.active,
-      icon: Clock,
-      color: 'text-primary-600',
-      bgColor: 'bg-primary-50',
-    },
-    {
-      title: 'Completed Tasks',
-      value: data.tasks.completed,
-      icon: CheckCircle2,
-      color: 'text-success-600',
-      bgColor: 'bg-success-50',
-    },
-    {
-      title: 'Overdue Tasks',
-      value: data.tasks.overdue,
-      icon: AlertCircle,
-      color: 'text-destructive-600',
-      bgColor: 'bg-destructive-50',
-    },
-  ];
 
   const costVariance = data.financial.total_budget - data.financial.total_actual_cost;
   const costVariancePercent =
@@ -97,267 +83,299 @@ export default function DashboardPage() {
       ? ((costVariance / data.financial.total_budget) * 100).toFixed(1)
       : 0;
 
+  // Prepare chart data
+  const taskStatusData = [
+    { name: 'Completed', value: data.tasks.completed, color: '#22c55e' },
+    { name: 'In Progress', value: data.tasks.in_progress, color: '#3b82f6' },
+    { name: 'Overdue', value: data.tasks.overdue, color: '#ef4444' },
+    { name: 'Pending', value: data.tasks.total - data.tasks.completed - data.tasks.in_progress - data.tasks.overdue, color: '#94a3b8' },
+  ];
+
+  const projectStatusData = [
+    { name: 'Planning', value: data.projects.planning || 0 },
+    { name: 'Active', value: data.projects.active },
+    { name: 'Completed', value: data.projects.completed || 0 },
+    { name: 'On Hold', value: data.projects.on_hold || 0 },
+  ];
+
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-700 to-primary-500 bg-clip-text text-transparent">
-          Dashboard
-        </h1>
-        <p className="text-muted-foreground mt-2 text-lg">
-          Welcome back! Here's what's happening with your projects.
-        </p>
+    <div className="space-y-6">
+      {/* Header with Quick Actions */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">
+            Welcome back! Here's an overview of your projects and tasks.
+          </p>
+        </div>
+        <Link href="/projects">
+          <Button size="lg" className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Project
+          </Button>
+        </Link>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <Card
-              key={stat.title}
-              className="elevation-2 hover:elevation-3 transition-elevation border-0 overflow-hidden group animate-slide-up"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground mb-2">
-                      {stat.title}
-                    </p>
-                    <p className="text-3xl font-bold text-foreground group-hover:scale-105 transition-transform">
-                      {stat.value}
-                    </p>
-                  </div>
-                  <div className={`p-4 rounded-2xl ${stat.bgColor} group-hover:scale-110 transition-all duration-300`}>
-                    <Icon className={`h-7 w-7 ${stat.color}`} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+      {/* KPI Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+            <FolderKanban className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{data.projects.total}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {data.projects.active} active
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Tasks</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{data.tasks.in_progress}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {data.tasks.total} total tasks
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {data.tasks.total > 0
+                ? Math.round((data.tasks.completed / data.tasks.total) * 100)
+                : 0}
+              %
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {data.tasks.completed} completed
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Budget Status</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {formatCurrency(data.financial.total_budget)}
+            </div>
+            <div className="flex items-center text-xs mt-1">
+              {costVariance >= 0 ? (
+                <>
+                  <TrendingUp className="h-3 w-3 text-success mr-1" />
+                  <span className="text-success">Under budget</span>
+                </>
+              ) : (
+                <>
+                  <TrendingDown className="h-3 w-3 text-destructive mr-1" />
+                  <span className="text-destructive">Over budget</span>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Task Distribution Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Task Distribution</CardTitle>
+            <CardDescription>Overview of task status breakdown</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={taskStatusData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {taskStatusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Project Status Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Projects by Status</CardTitle>
+            <CardDescription>Distribution of project statuses</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={projectStatusData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Financial Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="elevation-2 border-0 animate-slide-up" style={{ animationDelay: '200ms' }}>
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-accent-50">
-                <DollarSign className="h-5 w-5 text-accent-600" />
-              </div>
-              <CardTitle className="text-xl">Financial Overview</CardTitle>
+      <Card>
+        <CardHeader>
+          <CardTitle>Financial Overview</CardTitle>
+          <CardDescription>Budget allocation and spending</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Total Budget</p>
+              <p className="text-2xl font-bold">{formatCurrency(data.financial.total_budget)}</p>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-5">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100/50">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-primary-700">Total Budget</span>
-                  <span className="text-xl font-bold text-primary-900">
-                    {formatCurrency(data.financial.total_budget)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-gradient-to-br from-secondary-50 to-secondary-100/50">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-secondary-700">Actual Cost</span>
-                  <span className="text-xl font-bold text-secondary-900">
-                    {formatCurrency(data.financial.total_actual_cost)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-border">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className={`h-5 w-5 ${costVariance >= 0 ? 'text-success-600' : 'text-destructive-600'}`} />
-                    <span className="text-sm font-medium text-foreground">Cost Variance</span>
-                  </div>
-                  <div className="text-right">
-                    <span
-                      className={`text-xl font-bold ${
-                        costVariance >= 0 ? 'text-success-600' : 'text-destructive-600'
-                      }`}
-                    >
-                      {formatCurrency(Math.abs(costVariance))}
-                    </span>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {costVariance >= 0 ? 'Under' : 'Over'} budget by {costVariancePercent}%
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Actual Cost</p>
+              <p className="text-2xl font-bold">{formatCurrency(data.financial.total_actual_cost)}</p>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="elevation-2 border-0 animate-slide-up" style={{ animationDelay: '250ms' }}>
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-primary-50">
-                <CheckCircle2 className="h-5 w-5 text-primary-600" />
-              </div>
-              <CardTitle className="text-xl">Task Overview</CardTitle>
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Variance</p>
+              <p className={`text-2xl font-bold ${costVariance >= 0 ? 'text-success' : 'text-destructive'}`}>
+                {costVariance >= 0 ? '+' : ''}{formatCurrency(costVariance)}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {costVariancePercent}% {costVariance >= 0 ? 'under' : 'over'} budget
+              </p>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between py-3 px-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                <span className="text-sm font-medium text-muted-foreground">Total Tasks</span>
-                <span className="text-lg font-bold text-foreground">{data.tasks.total}</span>
-              </div>
-              <div className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-success-50/50 transition-colors">
-                <span className="text-sm font-medium text-muted-foreground">Completed</span>
-                <Badge className="bg-success-100 text-success-700 hover:bg-success-200 border-success-200">
-                  {data.tasks.completed}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-accent-50/50 transition-colors">
-                <span className="text-sm font-medium text-muted-foreground">In Progress</span>
-                <Badge className="bg-accent-100 text-accent-700 hover:bg-accent-200 border-accent-200">
-                  {data.tasks.in_progress}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-destructive-50/50 transition-colors">
-                <span className="text-sm font-medium text-muted-foreground">Overdue</span>
-                <Badge className="bg-destructive-100 text-destructive-700 hover:bg-destructive-200 border-destructive-200">
-                  {data.tasks.overdue}
-                </Badge>
-              </div>
-              <div className="pt-3 mt-2 border-t border-border">
-                <div className="flex items-center justify-between px-4 py-2">
-                  <span className="text-sm font-medium text-foreground">Completion Rate</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-primary-500 to-success-500 transition-all duration-500"
-                        style={{
-                          width: `${data.tasks.total > 0 ? (data.tasks.completed / data.tasks.total) * 100 : 0}%`,
-                        }}
-                      />
-                    </div>
-                    <span className="text-lg font-bold text-primary-600 min-w-[3rem] text-right">
-                      {data.tasks.total > 0
-                        ? Math.round((data.tasks.completed / data.tasks.total) * 100)
-                        : 0}
-                      %
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="elevation-2 border-0 animate-slide-up" style={{ animationDelay: '300ms' }}>
-          <CardHeader className="pb-3">
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Recent Projects */}
+        <Card>
+          <CardHeader>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-primary-50">
-                  <FolderKanban className="h-5 w-5 text-primary-600" />
-                </div>
-                <CardTitle className="text-xl">Recent Projects</CardTitle>
-              </div>
-              <Link
-                href="/projects"
-                className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors flex items-center gap-1 group"
-              >
-                View all
-                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+              <CardTitle>Recent Projects</CardTitle>
+              <Link href="/projects">
+                <Button variant="ghost" size="sm" className="gap-1">
+                  View all
+                  <ArrowRight className="h-3 w-3" />
+                </Button>
               </Link>
             </div>
           </CardHeader>
           <CardContent>
             {Array.isArray(data.recent_projects) && data.recent_projects.length > 0 ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {data.recent_projects.map((project) => (
                   <Link
                     key={String(project.id)}
                     href={`/projects/${project.id}`}
-                    className="block p-4 rounded-xl hover:bg-muted/50 transition-all duration-200 hover:elevation-1 group"
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-foreground group-hover:text-primary-600 transition-colors truncate">
-                          {project.name}
-                        </h4>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {formatRelativeTime(project.created_at)}
-                        </p>
-                      </div>
-                      <Badge className={`${getStatusColor(project.status)} shrink-0`}>
-                        {project.status}
-                      </Badge>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{project.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatRelativeTime(project.created_at)}
+                      </p>
                     </div>
+                    <Badge variant="secondary" className={getStatusColor(project.status)}>
+                      {project.status}
+                    </Badge>
                   </Link>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <FolderKanban className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-muted-foreground">No recent projects</p>
+              <div className="text-center py-8 text-muted-foreground">
+                <FolderKanban className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No recent projects</p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        <Card className="elevation-2 border-0 animate-slide-up" style={{ animationDelay: '350ms' }}>
-          <CardHeader className="pb-3">
+        {/* Recent Tasks */}
+        <Card>
+          <CardHeader>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-accent-50">
-                  <CheckCircle2 className="h-5 w-5 text-accent-600" />
-                </div>
-                <CardTitle className="text-xl">Recent Tasks</CardTitle>
-              </div>
-              <Link
-                href="/projects"
-                className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors flex items-center gap-1 group"
-              >
-                View all
-                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+              <CardTitle>Recent Tasks</CardTitle>
+              <Link href="/projects">
+                <Button variant="ghost" size="sm" className="gap-1">
+                  View all
+                  <ArrowRight className="h-3 w-3" />
+                </Button>
               </Link>
             </div>
           </CardHeader>
           <CardContent>
             {Array.isArray(data.recent_tasks) && data.recent_tasks.length > 0 ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {data.recent_tasks.map((task) => (
                   <div
                     key={String(task.id)}
-                    className="p-4 rounded-xl hover:bg-muted/50 transition-all duration-200 hover:elevation-1 group"
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-foreground group-hover:text-primary-600 transition-colors">
-                          {task.title}
-                        </h4>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {task.project} • {formatRelativeTime(task.created_at)}
-                        </p>
-                      </div>
-                      <Badge className={`${getStatusColor(task.status)} shrink-0`}>
-                        {task.status}
-                      </Badge>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{task.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {task.project} • {formatRelativeTime(task.created_at)}
+                      </p>
                     </div>
+                    <Badge variant="secondary" className={getStatusColor(task.status)}>
+                      {task.status}
+                    </Badge>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <CheckCircle2 className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-muted-foreground">No recent tasks</p>
+              <div className="text-center py-8 text-muted-foreground">
+                <CheckCircle2 className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No recent tasks</p>
               </div>
             )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Overdue Tasks Alert */}
+      {data.tasks.overdue > 0 && (
+        <Card className="border-destructive">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-destructive" />
+              <CardTitle className="text-destructive">Attention Required</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm">
+              You have <strong>{data.tasks.overdue} overdue task{data.tasks.overdue !== 1 ? 's' : ''}</strong> that need immediate attention.
+            </p>
+            <Link href="/projects">
+              <Button variant="destructive" size="sm" className="mt-3">
+                View Overdue Tasks
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

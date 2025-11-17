@@ -1,5 +1,5 @@
 /**
- * Kanban Board Component with Drag & Drop
+ * Enhanced Kanban Board Component with Drag & Drop
  */
 'use client';
 
@@ -20,7 +20,8 @@ import { TaskForm } from '@/components/tasks/task-form';
 import { KanbanColumn } from './kanban-column';
 import { Loading } from '@/components/ui/loading';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Plus, RefreshCw, LayoutGrid } from 'lucide-react';
 import type { Task } from '@/types';
 
 interface KanbanBoardProps {
@@ -28,11 +29,36 @@ interface KanbanBoardProps {
 }
 
 const COLUMNS = [
-  { id: 'backlog', title: 'Backlog', color: 'bg-gray-100' },
-  { id: 'todo', title: 'To Do', color: 'bg-blue-100' },
-  { id: 'in_progress', title: 'In Progress', color: 'bg-purple-100' },
-  { id: 'review', title: 'Review', color: 'bg-orange-100' },
-  { id: 'done', title: 'Done', color: 'bg-green-100' },
+  {
+    id: 'backlog',
+    title: 'Backlog',
+    color: 'hsl(var(--secondary))',
+    badgeColor: 'bg-secondary/10 text-secondary-foreground border-secondary/20'
+  },
+  {
+    id: 'todo',
+    title: 'To Do',
+    color: 'hsl(var(--accent))',
+    badgeColor: 'bg-accent/10 text-accent-foreground border-accent/20'
+  },
+  {
+    id: 'in_progress',
+    title: 'In Progress',
+    color: 'hsl(var(--primary))',
+    badgeColor: 'bg-primary/10 text-primary-foreground border-primary/20'
+  },
+  {
+    id: 'review',
+    title: 'Review',
+    color: 'hsl(var(--warning))',
+    badgeColor: 'bg-warning/10 text-warning-foreground border-warning/20'
+  },
+  {
+    id: 'done',
+    title: 'Done',
+    color: 'hsl(var(--success))',
+    badgeColor: 'bg-success/10 text-success-foreground border-success/20'
+  },
 ];
 
 export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
@@ -106,6 +132,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
       await createTask(data);
       setShowTaskForm(false);
       setDefaultStatus('todo');
+      await fetchKanbanData(projectId);
     } catch (error) {
       // Error handled by store
     }
@@ -116,6 +143,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
     try {
       await updateTask(editingTask.id, data);
       setEditingTask(null);
+      await fetchKanbanData(projectId);
     } catch (error) {
       // Error handled by store
     }
@@ -130,6 +158,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
     } catch (error) {
       // Error handled by store
     }
+  };
+
+  const handleRefresh = () => {
+    fetchKanbanData(projectId);
   };
 
   const openCreateForm = (status: string) => {
@@ -147,8 +179,9 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        {error}
+      <div className="rounded-lg border border-destructive bg-destructive/10 p-4 text-destructive">
+        <p className="font-medium">Error loading Kanban board</p>
+        <p className="text-sm mt-1">{error}</p>
       </div>
     );
   }
@@ -156,25 +189,46 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
   if (!kanbanData) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No tasks found</p>
+        <LayoutGrid className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+        <p className="text-muted-foreground">No tasks found</p>
       </div>
     );
   }
 
+  const totalTasks = Object.values(kanbanData).reduce((sum, tasks) =>
+    sum + (Array.isArray(tasks) ? tasks.length : 0), 0
+  );
+
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Kanban Board</h3>
-        <Button onClick={() => openCreateForm('todo')} size="sm">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Task
-        </Button>
-      </div>
+      <Card className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div>
+              <h3 className="text-lg font-semibold">Kanban Board</h3>
+              <p className="text-sm text-muted-foreground">
+                {totalTasks} {totalTasks === 1 ? 'task' : 'tasks'} across all columns
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button onClick={handleRefresh} size="sm" variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+            <Button onClick={() => openCreateForm('todo')} size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Task
+            </Button>
+          </div>
+        </div>
+      </Card>
 
       {/* Kanban Board */}
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {COLUMNS.map((column) => {
             const columnTasks = (kanbanData && kanbanData[column.id as keyof typeof kanbanData]) || [];
 
@@ -184,6 +238,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
                 id={column.id}
                 title={column.title}
                 color={column.color}
+                badgeColor={column.badgeColor}
                 tasks={Array.isArray(columnTasks) ? columnTasks : []}
                 onAddTask={() => openCreateForm(column.id)}
                 onEditTask={setEditingTask}
@@ -195,7 +250,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
 
         <DragOverlay>
           {activeTask ? (
-            <div className="opacity-50">
+            <div className="opacity-60 rotate-3">
               <TaskCard
                 task={activeTask}
                 onEdit={() => {}}
@@ -222,10 +277,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Task</h3>
-            <p className="text-gray-600 mb-6">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
+          <Card className="max-w-md w-full mx-4 p-6">
+            <h3 className="text-lg font-semibold mb-2">Delete Task</h3>
+            <p className="text-muted-foreground mb-6">
               Are you sure you want to delete this task? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
@@ -233,14 +288,13 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
                 Cancel
               </Button>
               <Button
-                variant="danger"
+                variant="destructive"
                 onClick={() => handleDeleteTask(showDeleteConfirm)}
-                isLoading={isLoading}
               >
                 Delete
               </Button>
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>

@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     musl-dev \
     libpq-dev \
     curl \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory

@@ -8,7 +8,7 @@ import type { Project } from '@/types';
 import { Modal, ModalFooter } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
+import { SelectField as Select } from '@/components/ui/select-field';
 import { useClientStore } from '@/lib/store/client-store';
 
 interface ProjectFormProps {

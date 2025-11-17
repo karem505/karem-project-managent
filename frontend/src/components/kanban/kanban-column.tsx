@@ -1,11 +1,14 @@
 /**
- * Kanban Column Component
+ * Enhanced Kanban Column Component
  */
 'use client';
 
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { SortableTaskCard } from './sortable-task-card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { Plus } from 'lucide-react';
 import type { Task } from '@/types';
 
@@ -13,6 +16,7 @@ interface KanbanColumnProps {
   id: string;
   title: string;
   color: string;
+  badgeColor?: string;
   tasks: Task[];
   onAddTask: () => void;
   onEditTask: (task: Task) => void;
@@ -23,6 +27,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   id,
   title,
   color,
+  badgeColor,
   tasks,
   onAddTask,
   onEditTask,
@@ -33,31 +38,35 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   });
 
   return (
-    <div className="flex flex-col h-full">
+    <Card className="flex flex-col h-full">
       {/* Column Header */}
-      <div className={`${color} rounded-t-lg px-4 py-3 border-b border-gray-200`}>
-        <div className="flex items-center justify-between">
+      <div className="p-4 border-b">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900">{title}</h3>
-            <span className="text-sm text-gray-600 bg-white px-2 py-0.5 rounded-full">
+            <h3 className="font-semibold text-sm">{title}</h3>
+            <Badge variant="secondary" className={badgeColor}>
               {tasks.length}
-            </span>
+            </Badge>
           </div>
-          <button
+          <Button
             onClick={onAddTask}
-            className="p-1 hover:bg-white hover:bg-opacity-50 rounded transition-colors"
-            title="Add task"
+            size="sm"
+            variant="ghost"
+            className="h-7 w-7 p-0"
           >
-            <Plus className="h-4 w-4 text-gray-600" />
-          </button>
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="h-1 w-full rounded-full overflow-hidden bg-muted">
+          <div className="h-full" style={{ backgroundColor: color, width: '100%' }} />
         </div>
       </div>
 
       {/* Column Content */}
       <div
         ref={setNodeRef}
-        className={`flex-1 bg-gray-50 rounded-b-lg p-3 space-y-3 min-h-[500px] transition-colors ${
-          isOver ? 'bg-primary-50 ring-2 ring-primary-300' : ''
+        className={`flex-1 p-3 space-y-2 min-h-[500px] overflow-y-auto transition-all ${
+          isOver ? 'bg-accent/30 ring-2 ring-primary ring-inset' : 'bg-muted/20'
         }`}
       >
         <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
@@ -71,12 +80,21 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
           ))}
         </SortableContext>
 
-        {tasks.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm">
-            No tasks
+        {tasks.length === 0 && !isOver && (
+          <div className="text-center py-12 text-muted-foreground text-sm">
+            <div className="text-4xl mb-2 opacity-20">📋</div>
+            <p>No tasks</p>
+            <p className="text-xs mt-1">Drag tasks here</p>
+          </div>
+        )}
+
+        {tasks.length === 0 && isOver && (
+          <div className="text-center py-12 text-primary text-sm font-medium">
+            <div className="text-4xl mb-2">↓</div>
+            <p>Drop task here</p>
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 };

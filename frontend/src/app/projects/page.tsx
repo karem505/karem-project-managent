@@ -9,7 +9,7 @@ import { ProjectCard } from '@/components/projects/project-card';
 import { ProjectForm } from '@/components/projects/project-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
+import { SelectField as Select } from '@/components/ui/select-field';
 import { Loading } from '@/components/ui/loading';
 import { Plus, Search, Filter } from 'lucide-react';
 import type { Project } from '@/types';

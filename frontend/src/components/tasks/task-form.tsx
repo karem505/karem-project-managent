@@ -8,7 +8,7 @@ import type { Task } from '@/types';
 import { Modal, ModalFooter } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
+import { SelectField as Select } from '@/components/ui/select-field';
 import { DependencyManager } from '@/components/dependencies/dependency-manager';
 import { useTaskStore } from '@/lib/store/task-store';
 

@@ -1,5 +1,5 @@
 /**
- * Gantt Chart Component with DHTMLX Gantt
+ * Enhanced Gantt Chart Component with DHTMLX Gantt
  */
 'use client';
 
@@ -9,7 +9,17 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
 import { useTaskStore } from '@/lib/store/task-store';
 import { Loading } from '@/components/ui/loading';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, ZoomIn, ZoomOut } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  RefreshCw,
+  ZoomIn,
+  ZoomOut,
+  Download,
+  Filter,
+  Calendar,
+  Info,
+  Maximize2,
+} from 'lucide-react';
 import type { Task } from '@/types';
 
 interface GanttChartProps {
@@ -20,6 +30,8 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
   const ganttContainer = useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [zoomLevel, setZoomLevel] = useState('day');
+  const [showCriticalPath, setShowCriticalPath] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const { fetchGanttData, isLoading, error } = useTaskStore();
 
@@ -44,13 +56,20 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
     }
   }, [projectId, isInitialized]);
 
+  useEffect(() => {
+    if (isInitialized) {
+      gantt.config.highlight_critical_path = showCriticalPath;
+      gantt.render();
+    }
+  }, [showCriticalPath, isInitialized]);
+
   const configureGantt = () => {
-    // Basic configuration
+    // Basic configuration with professional styling
     gantt.config.date_format = '%Y-%m-%d';
-    gantt.config.scale_height = 90;
-    gantt.config.row_height = 40;
-    gantt.config.bar_height = 24;
-    gantt.config.min_column_width = 50;
+    gantt.config.scale_height = 56;
+    gantt.config.row_height = 36;
+    gantt.config.bar_height = 20;
+    gantt.config.min_column_width = 60;
     gantt.config.auto_scheduling = true;
     gantt.config.auto_scheduling_strict = true;
     gantt.config.work_time = true;
@@ -63,7 +82,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
     gantt.config.drag_move = true;
 
     // Enable critical path
-    gantt.config.highlight_critical_path = true;
+    gantt.config.highlight_critical_path = showCriticalPath;
 
     // Configure columns
     gantt.config.columns = [
@@ -94,7 +113,8 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
         align: 'center',
         width: 80,
         template: (task: any) => {
-          return Math.round(task.progress * 100) + '%';
+          const progressPercent = Math.round(task.progress * 100);
+          return `<span class="font-medium">${progressPercent}%</span>`;
         },
       },
       {
@@ -112,7 +132,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
       if (task.is_critical) {
         return 'critical-task';
       }
-      return '';
+      return 'normal-task';
     };
 
     // Configure link template for critical path
@@ -124,21 +144,92 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
       return '';
     };
 
-    // Add custom styling
+    // Professional styling with new color scheme
     const style = document.createElement('style');
     style.innerHTML = `
+      /* Professional Gantt Styling */
+      .gantt_container {
+        font-family: inherit;
+        border-radius: 0.75rem;
+        overflow: hidden;
+      }
+
+      .gantt_grid_scale,
+      .gantt_task_scale {
+        background: hsl(var(--muted));
+        border-bottom: 1px solid hsl(var(--border));
+        font-weight: 600;
+        color: hsl(var(--foreground));
+      }
+
+      .gantt_grid_data .gantt_row:nth-child(odd) {
+        background: hsl(var(--background));
+      }
+
+      .gantt_grid_data .gantt_row:nth-child(even) {
+        background: hsl(var(--muted) / 0.3);
+      }
+
+      .gantt_task .gantt_task_row:nth-child(odd) {
+        background: hsl(var(--background));
+      }
+
+      .gantt_task .gantt_task_row:nth-child(even) {
+        background: hsl(var(--muted) / 0.3);
+      }
+
+      /* Normal tasks - Professional blue */
+      .gantt_task_line.normal-task {
+        background: hsl(var(--primary));
+        border: 1px solid hsl(var(--primary));
+        border-radius: 4px;
+      }
+
+      .gantt_task_line.normal-task .gantt_task_progress {
+        background: hsl(var(--primary) / 0.7);
+      }
+
+      /* Critical tasks - Professional red */
       .gantt_task_line.critical-task {
-        background-color: #ef4444 !important;
-        border-color: #dc2626 !important;
+        background: hsl(var(--destructive)) !important;
+        border: 1px solid hsl(var(--destructive)) !important;
+        border-radius: 4px;
       }
+
       .gantt_task_line.critical-task .gantt_task_progress {
-        background-color: #991b1b !important;
+        background: hsl(var(--destructive) / 0.7) !important;
       }
+
+      /* Critical path links */
       .gantt_line.critical-link {
-        background-color: #ef4444 !important;
+        background-color: hsl(var(--destructive)) !important;
       }
+
       .gantt_line.critical-link .gantt_link_arrow {
-        border-color: #ef4444 !important;
+        border-color: hsl(var(--destructive)) !important;
+      }
+
+      /* Hover effects */
+      .gantt_task_line:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      /* Grid lines */
+      .gantt_grid_scale,
+      .gantt_grid_data,
+      .gantt_task_scale,
+      .gantt_task_bg {
+        border-color: hsl(var(--border));
+      }
+
+      .gantt_cell {
+        border-color: hsl(var(--border));
+      }
+
+      /* Today marker */
+      .gantt_marker {
+        background-color: hsl(var(--primary)) !important;
+        opacity: 0.3;
       }
     `;
     document.head.appendChild(style);
@@ -209,6 +300,15 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
 
         gantt.clearAll();
         gantt.parse(ganttTasks);
+
+        // Add today marker
+        const dateToStr = gantt.date.date_to_str(gantt.config.task_date);
+        const markerId = gantt.addMarker({
+          start_date: new Date(),
+          css: 'today',
+          text: 'Today',
+          title: 'Today: ' + dateToStr(new Date()),
+        });
       }
     } catch (err) {
       console.error('Failed to load Gantt data:', err);
@@ -261,6 +361,20 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
     loadGanttData();
   };
 
+  const handleExport = () => {
+    if (typeof gantt.exportToPDF !== 'undefined') {
+      gantt.exportToPDF();
+    }
+  };
+
+  const toggleCriticalPath = () => {
+    setShowCriticalPath(!showCriticalPath);
+  };
+
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   if (isLoading && !isInitialized) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -271,59 +385,93 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        {error}
+      <div className="rounded-lg border border-destructive bg-destructive/10 p-4 text-destructive">
+        <p className="font-medium">Error loading Gantt chart</p>
+        <p className="text-sm mt-1">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Gantt Chart</h3>
-        <div className="flex items-center gap-2">
-          <Button onClick={handleZoomOut} size="sm" variant="outline" disabled={zoomLevel === 'month'}>
-            <ZoomOut className="h-4 w-4" />
-          </Button>
-          <Button onClick={handleZoomIn} size="sm" variant="outline" disabled={zoomLevel === 'hour'}>
-            <ZoomIn className="h-4 w-4" />
-          </Button>
-          <Button onClick={handleRefresh} size="sm" variant="outline">
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Info Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <div className="text-blue-600 mt-0.5">
-            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                clipRule="evenodd"
-              />
-            </svg>
+    <Card className={isFullscreen ? 'fixed inset-0 z-50 rounded-none' : ''}>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Gantt Chart</CardTitle>
+            <CardDescription>Visual timeline of project tasks and dependencies</CardDescription>
           </div>
-          <div className="flex-1">
-            <p className="text-sm text-blue-800 font-medium">
-              Critical Path Highlighting Enabled
-            </p>
-            <p className="text-sm text-blue-700 mt-1">
-              Tasks in red are on the critical path. Any delay in these tasks will delay the entire project.
-            </p>
+
+          {/* Toolbar */}
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={toggleCriticalPath}
+              size="sm"
+              variant={showCriticalPath ? 'default' : 'outline'}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Critical Path
+            </Button>
+
+            <div className="flex items-center border rounded-md">
+              <Button
+                onClick={handleZoomOut}
+                size="sm"
+                variant="ghost"
+                disabled={zoomLevel === 'month'}
+                className="rounded-r-none border-r"
+              >
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+              <div className="px-3 py-1 text-sm font-medium min-w-[60px] text-center">
+                {zoomLevel.charAt(0).toUpperCase() + zoomLevel.slice(1)}
+              </div>
+              <Button
+                onClick={handleZoomIn}
+                size="sm"
+                variant="ghost"
+                disabled={zoomLevel === 'hour'}
+                className="rounded-l-none border-l"
+              >
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <Button onClick={handleRefresh} size="sm" variant="outline">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+
+            <Button onClick={toggleFullscreen} size="sm" variant="outline">
+              <Maximize2 className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-      </div>
+      </CardHeader>
 
-      {/* Gantt Container */}
-      <div
-        ref={ganttContainer}
-        className="bg-white border border-gray-200 rounded-lg overflow-hidden"
-        style={{ width: '100%', height: '600px' }}
-      />
-    </div>
+      <CardContent>
+        {/* Info Banner */}
+        {showCriticalPath && (
+          <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-primary">
+                  Critical Path Analysis Enabled
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Tasks highlighted in red are on the critical path. Any delay in these tasks will impact the project deadline.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Gantt Container */}
+        <div
+          ref={ganttContainer}
+          className="rounded-lg border overflow-hidden bg-card"
+          style={{ width: '100%', height: isFullscreen ? 'calc(100vh - 200px)' : '600px' }}
+        />
+      </CardContent>
+    </Card>
   );
 };
