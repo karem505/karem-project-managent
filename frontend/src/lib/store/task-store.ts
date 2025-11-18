@@ -35,6 +35,7 @@ interface TaskStore {
   // Kanban operations
   fetchKanbanData: (projectId: string) => Promise<void>;
   moveKanbanTask: (id: string, data: MoveKanbanData) => Promise<void>;
+  moveTask: (id: string, data: MoveKanbanData) => Promise<void>; // Alias for moveKanbanTask
 
   // Gantt operations
   fetchGanttData: (projectId: string) => Promise<void>;
@@ -200,6 +201,11 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         isLoading: false,
       });
     }
+  },
+
+  // Alias for moveKanbanTask
+  moveTask: async (id: string, data: MoveKanbanData) => {
+    return get().moveKanbanTask(id, data);
   },
 
   // Fetch Gantt chart data
