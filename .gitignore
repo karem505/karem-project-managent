@@ -66,6 +66,9 @@ frontend/.next/
 frontend/out/
 frontend/build/
 
+# TypeScript
+*.tsbuildinfo
+
 # Testing
 .coverage
 htmlcov/
